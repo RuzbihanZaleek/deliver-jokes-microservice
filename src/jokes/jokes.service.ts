@@ -31,11 +31,23 @@ export class JokesService {
   }
 
   async create(createJokeDto: CreateJokeDto): Promise<Joke> {
-    const joke = this.jokesRepository.create(createJokeDto);
     try {
+      // Check if the joke already exists
+      const existingJoke = await this.jokesRepository.findOne({
+        where: { content: createJokeDto.content },
+      });
+
+      if (existingJoke) {
+        throw new InternalServerErrorException('Joke already exists.');
+      }
+
+      // If no duplicate joke found, proceed with saving
+      const joke = this.jokesRepository.create(createJokeDto);
       return await this.jokesRepository.save(joke);
     } catch (error) {
-      throw new InternalServerErrorException('Could not save the joke.');
+      throw new InternalServerErrorException(
+        error.message || 'Could not save the joke.',
+      );
     }
   }
 }

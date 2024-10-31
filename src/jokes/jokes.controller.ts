@@ -46,6 +46,7 @@ export class JokesController {
     description: 'Deliver joke created successfully',
   })
   @ApiResponse({ status: 409, description: 'Deliver joke already exists.' })
+  @ApiResponse({ status: 500, description: 'Error creating delivery joke' })
   async create(@Body() createJokeDto: CreateJokeDto): Promise<Joke> {
     return this.jokesService.create(createJokeDto);
   }

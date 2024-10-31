@@ -17,6 +17,11 @@ export class JokesController {
     return this.jokesService.findAllTypes();
   }
 
+  @Get('types/:type')
+  async findByType(@Param('type') type: string): Promise<Joke[]> {
+    return this.jokesService.findByType(type);
+  }
+
   @Post()
   async create(@Body() createJokeDto: CreateJokeDto): Promise<Joke> {
     return this.jokesService.create(createJokeDto);

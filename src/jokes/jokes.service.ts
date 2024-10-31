@@ -30,6 +30,16 @@ export class JokesService {
     }
   }
 
+  async findByType(type: string): Promise<Joke[]> {
+    try {
+      return await this.jokesRepository.find({ where: { type } });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error retrieving jokes of type ${type}: ${error.message}`,
+      );
+    }
+  }
+
   async create(createJokeDto: CreateJokeDto): Promise<Joke> {
     try {
       // Check if the joke already exists

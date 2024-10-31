@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Joke } from './entities/jokes.entity';
@@ -14,7 +18,13 @@ export class JokesService {
   ) {}
 
   async findAll(): Promise<Joke[]> {
-    return this.jokesRepository.find();
+    try {
+      return await this.jokesRepository.find();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Error retrieving jokes : ${error.message}`,
+      );
+    }
   }
 
   async findAllTypes(): Promise<string[]> {
@@ -48,13 +58,14 @@ export class JokesService {
       });
 
       if (existingJoke) {
-        throw new InternalServerErrorException('Joke already exists.');
+        throw new ConflictException('Joke already exists.');
       }
 
       // If no duplicate joke found, proceed with saving
       const joke = this.jokesRepository.create(createJokeDto);
       return await this.jokesRepository.save(joke);
     } catch (error) {
+      if (error instanceof ConflictException) throw error;
       throw new InternalServerErrorException(
         error.message || 'Could not save the joke.',
       );

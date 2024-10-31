@@ -9,6 +9,7 @@ import { Joke } from './entities/jokes.entity';
 import { CreateJokeDto } from './dto/create-joke.dto';
 import { lastValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
+import { JOKE_DELIVERY_MESSAGES } from 'src/constants';
 
 @Injectable()
 export class JokesService {
@@ -22,7 +23,7 @@ export class JokesService {
       return await this.jokesRepository.find();
     } catch (error) {
       throw new InternalServerErrorException(
-        `Error retrieving jokes : ${error.message}`,
+        `${JOKE_DELIVERY_MESSAGES.FETCH_ERROR} : ${error.message}`,
       );
     }
   }
@@ -35,7 +36,7 @@ export class JokesService {
       return response.data;
     } catch (error) {
       throw new InternalServerErrorException(
-        `Error retrieving joke types: ${error.message}`,
+        `${JOKE_DELIVERY_MESSAGES.FETCH_TYPES_ERROR}: ${error.message}`,
       );
     }
   }
@@ -45,7 +46,7 @@ export class JokesService {
       return await this.jokesRepository.find({ where: { type } });
     } catch (error) {
       throw new InternalServerErrorException(
-        `Error retrieving jokes of type ${type}: ${error.message}`,
+        `${JOKE_DELIVERY_MESSAGES.FETCH_BY_TYPE_ERROR} ${type}: ${error.message}`,
       );
     }
   }
@@ -58,7 +59,7 @@ export class JokesService {
       });
 
       if (existingJoke) {
-        throw new ConflictException('Joke already exists.');
+        throw new ConflictException(JOKE_DELIVERY_MESSAGES.CREATE_CONFLICT);
       }
 
       // If no duplicate joke found, proceed with saving
@@ -67,7 +68,7 @@ export class JokesService {
     } catch (error) {
       if (error instanceof ConflictException) throw error;
       throw new InternalServerErrorException(
-        error.message || 'Could not save the joke.',
+        error.message || JOKE_DELIVERY_MESSAGES.SAVE_ERROR,
       );
     }
   }

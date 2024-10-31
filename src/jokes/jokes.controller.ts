@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { JokesService } from './jokes.service';
 import { Joke } from './entities/jokes.entity';
 import { CreateJokeDto } from './dto/create-joke.dto';
